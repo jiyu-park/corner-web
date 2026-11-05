@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { Shell } from '@/components/Shell';
 import { ErrorBox, OkBox } from '@/components/ErrorBox';
-import { Calendar, CalItem } from '@/components/Calendar';
+import { Calendar, CalItem, fullDays } from '@/components/Calendar';
 import { api, fmtMin } from '@/lib/api';
 
 const TIMES: string[] = [];
@@ -35,6 +35,7 @@ function Rooms() {
   const [error, setError] = useState<unknown>(null);
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     api('/meeting-rooms').then((r) => { setRooms(r); if (r[0]) setRoomId(r[0].id); }).catch(setError);
@@ -71,7 +72,22 @@ function Rooms() {
     return () => clearTimeout(t);
   }, [date, start, end, roomId, people, result]);
 
+  // 방이나 달을 바꾸면 달력 아래 안내 문구는 지운다.
+  useEffect(() => { setNotice(null); }, [roomId, month]);
+
+  // 회색(마감·지난 날짜) 칸을 눌렀을 때 이유를 한 줄로 알려 준다.
+  function onBlocked(d: string, kind: 'past' | 'full') {
+    const [, mm, dd] = d.split('-').map(Number);
+    const label = `${mm}월 ${dd}일`;
+    if (kind === 'past') { setNotice(`${label}은 이미 지난 날짜라 예약할 수 없어요.`); return; }
+    const othersOpen = rooms.some((r) => r.id !== roomId && !fullDays(cal.filter((c) => c.meeting_room_id === r.id)).has(d));
+    setNotice(othersOpen
+      ? `${label}은 ${room?.name ?? '이 회의실'}의 예약이 가득 찼어요. 다른 방을 골라 보세요.`
+      : `${label}은 모든 회의실의 예약이 가득 찼어요. 다른 날짜를 골라 주세요.`);
+  }
+
   function pickDate(d: string) {
+    setNotice(null);
     setDate(d);
     setMonth(d.slice(0, 7));
   }
@@ -122,7 +138,8 @@ function Rooms() {
 
       <h2>2. 날짜 고르기 <span className="small">({room?.name ?? '회의실'}의 예약)</span></h2>
       <div className="card">
-        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} roomItems={roomCal} mineDates={mineDates} today={today()} />
+        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} roomItems={roomCal} mineDates={mineDates} onBlocked={onBlocked} today={today()} />
+        {notice && <p className="cal-note" role="status">{notice}</p>}
       </div>
 
       <h2>{date} ({weekday(date)}) {room?.name} 시간표</h2>

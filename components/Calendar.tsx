@@ -23,7 +23,7 @@ export function shiftMonth(month: string, delta: number) {
 }
 
 /** 예약 가능한 시간(08:00~22:00, 30분 단위 28칸)이 모두 예약된 날짜 목록 */
-function fullDays(items: CalItem[]): Set<string> {
+export function fullDays(items: CalItem[]): Set<string> {
   const covered: Record<string, Set<number>> = {};
   for (const it of items) {
     const set = (covered[it.reserved_date] ||= new Set());
@@ -50,6 +50,7 @@ export function Calendar({
   onSelect,
   roomItems,
   mineDates,
+  onBlocked,
   today,
 }: {
   month: string;
@@ -58,6 +59,7 @@ export function Calendar({
   onSelect: (d: string) => void;
   roomItems: CalItem[];
   mineDates: Set<string>;
+  onBlocked: (date: string, kind: 'past' | 'full') => void;
   today: string;
 }) {
   const [y, m] = month.split('-').map(Number);
@@ -111,7 +113,7 @@ export function Calendar({
               aria-disabled={disabled}
               aria-pressed={date === selected}
               title={isFull ? '이 날은 이 회의실의 예약이 가득 찼어요' : undefined}
-              onClick={() => { if (!disabled) onSelect(date); }}
+              onClick={() => { if (disabled) onBlocked(date, past ? 'past' : 'full'); else onSelect(date); }}
               onKeyDown={(e) => { if (!disabled) key(e, date); }}
             >
               <span className="cal-date">{d}</span>

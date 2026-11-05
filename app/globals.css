@@ -365,3 +365,21 @@ tbody tr:last-child td { border-bottom: 0; }
 .preview.over { background: var(--orange-50); }
 .preview.over strong { color: var(--orange-600); }
 .preview .warn { color: var(--negative-strong); font-weight: var(--weight-semibold); }
+
+/* 회색(마감·지난 날짜) 칸을 눌렀을 때 달력 아래에 이유를 한 줄로 보여 준다 */
+.cal-note { margin: var(--sp-300) 0 0; padding: var(--sp-300) var(--sp-400); background: var(--orange-50); border: 1px solid var(--orange-500); border-radius: var(--radius-300); color: var(--gray-900); font-size: var(--fs-body3); line-height: var(--lh-body3); font-weight: var(--weight-medium); }
+
+/* 가독성: 쏘카 토큰은 모바일 앱 기준(본문 14px)이라 웹 화면에서는 작게 느껴져 한 단계 키운다.
+   다른 공유 오피스 사이트의 본문(14~16px)과 맞춘 값. 되돌리려면 이 블록만 지우면 된다. */
+:root {
+  --fs-title3: 16px;
+  --fs-body3: 16px;
+  --lh-body3: 26px;
+  --fs-body4: 14px;
+  --lh-body4: 22px;
+  --fs-caption1: 13px;
+  --lh-caption: 20px;
+}
+.cal-date { font-size: var(--fs-body3); }
+.cal-dow { font-size: var(--fs-body4); }
+@media (max-width: 640px) { .cal-full { font-size: 12px; } }
