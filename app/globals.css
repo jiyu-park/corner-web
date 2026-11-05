@@ -323,3 +323,47 @@ tbody tr:last-child td { border-bottom: 0; }
   .wallet-remain .big { font-size: var(--fs-display2); line-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* 회의실 선택 카드 */
+.room-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--sp-300); margin-bottom: var(--sp-400); }
+.room-card { display: flex; flex-direction: column; gap: var(--sp-100); background: var(--white); border: 1px solid var(--border-regular); border-radius: var(--radius-400); padding: var(--sp-400); cursor: pointer; }
+.room-card strong { font-size: var(--fs-title3); color: var(--text-strong); }
+.room-card.sel { border-color: var(--blue-500); background: var(--blue-50); box-shadow: inset 0 0 0 1px var(--blue-500); }
+.room-card:focus-visible { outline: 2px solid var(--primary-regular); outline-offset: 2px; }
+
+/* 한 달 달력 */
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-300); margin-bottom: var(--sp-300); }
+.cal-head strong { font-size: var(--fs-title2); color: var(--text-strong); }
+.cal-nav { display: flex; gap: var(--sp-100); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--border-weak); border-left: 1px solid var(--border-weak); }
+.cal-dow { text-align: center; padding: var(--sp-150) 0; background: var(--gray-50); border-right: 1px solid var(--border-weak); border-bottom: 1px solid var(--border-weak); font-size: var(--fs-caption1); color: var(--text-secondary); }
+.cal-dow.sun { color: var(--negative-strong); }
+.cal-cell { min-height: 96px; padding: var(--sp-100); display: flex; flex-direction: column; gap: 4px; background: var(--white); border-right: 1px solid var(--border-weak); border-bottom: 1px solid var(--border-weak); cursor: pointer; min-width: 0; }
+.cal-cell.out { background: var(--gray-50); cursor: default; }
+.cal-cell.past .cal-date { color: var(--text-tertiary); }
+.cal-cell.sel { background: var(--blue-50); box-shadow: inset 0 0 0 2px var(--blue-500); }
+.cal-cell:focus-visible { outline: 2px solid var(--primary-regular); outline-offset: -2px; }
+.cal-date { font-size: var(--fs-body4); font-weight: var(--weight-medium); color: var(--text-primary); width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius-circle); }
+.cal-cell.today .cal-date { background: var(--blue-500); color: var(--white); }
+.cal-chip { font-size: var(--fs-caption1); line-height: var(--lh-caption); padding: 1px var(--sp-100); border-radius: var(--radius-100); background: var(--gray-100); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-chip.mine { background: var(--blue-100); color: var(--blue-700); font-weight: var(--weight-semibold); }
+.cal-more { font-size: var(--fs-caption1); color: var(--text-tertiary); }
+.cal-count { display: none; }
+.cal .legend { flex-wrap: wrap; }
+.cal .legend .l-busy { background: var(--gray-200); }
+.cal .legend .l-mine { background: var(--blue-200); }
+@media (max-width: 640px) {
+  .cal-cell { min-height: 52px; align-items: center; }
+  .cal-chip, .cal-more { display: none; }
+  .cal-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: var(--radius-circle); background: var(--gray-200); color: var(--text-primary); font-size: var(--fs-caption1); font-weight: var(--weight-semibold); }
+  .cal-count.mine { background: var(--blue-500); color: var(--white); }
+}
+
+/* 예약 전 미리 보기 */
+.preview { background: var(--blue-50); border-radius: var(--radius-300); padding: var(--sp-300) var(--sp-400); margin-top: var(--sp-300); font-size: var(--fs-body3); line-height: var(--lh-body3); }
+.preview strong { color: var(--blue-900); }
+.preview p { margin: var(--sp-100) 0 0; }
+.preview ul { margin: var(--sp-100) 0 0; padding-left: var(--sp-500); }
+.preview.over { background: var(--orange-50); }
+.preview.over strong { color: var(--orange-600); }
+.preview .warn { color: var(--negative-strong); font-weight: var(--weight-semibold); }
