@@ -6,7 +6,7 @@ export function ErrorBox({ error }: { error: unknown }) {
   const e = error as ApiError;
   const source = e.source;
   return (
-    <div className="box err" role="alert">
+    <div className={`box err ${source || ''}`} role="alert">
       {source && (
         <span className={`badge ${source}`}>{source === 'db' ? 'DB가 거절했어요' : '백엔드가 거절했어요'}</span>
       )}

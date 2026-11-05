@@ -49,15 +49,16 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         <ErrorBox error={error} />
       </form>
       {!signup && demoEmail && demoPassword && (
-        <div className="card" style={{ marginTop: 12 }}>
+        <div className="demo">
           <strong>체험용 계정</strong>
-          <p className="small" style={{ margin: '6px 0' }}>
+          <p className="small">
             이메일 <code>{demoEmail}</code>
             <br />
             비밀번호 <code>{demoPassword}</code>
           </p>
           <button
             type="button"
+            className="sub"
             onClick={() => {
               setEmail(demoEmail);
               setPassword(demoPassword);

@@ -48,7 +48,7 @@ function Me() {
       <ErrorBox error={error} />
       <OkBox>{msg}</OkBox>
       <div className="card">
-        <strong>{me.user.name}</strong> <span className="small">{me.user.email}</span>
+        <span className="profile-name">{me.user.name}</span> <span className="small">{me.user.email}</span>
         <div>소속: {member ? `${member.type === 'company' ? '회사' : '개인'} · ${member.name}` : '없음'}</div>
         <div className="small">
           첫 노쇼·늦은 취소 면제: {me.free_pass_used ? '이미 사용했어요 (다음부터 50% 차감)' : '아직 사용하지 않았어요'}
@@ -61,17 +61,23 @@ function Me() {
         const over = w.remaining_minutes < 0;
         const pct = Math.min(100, w.total_minutes ? (w.used_minutes / w.total_minutes) * 100 : 0);
         return (
-          <div className="card" key={w.membership_id}>
-            <div><strong>{w.member_name}</strong> · {w.plan_name} ({w.member_type === 'company' ? '회사' : '개인'})</div>
-            <div className="small">{w.cycle_start} ~ {w.cycle_end}</div>
+          <div className={`card ${over ? 'over' : ''}`} key={w.membership_id}>
+            <div className="wallet-head">
+              <div className="wallet-title">{w.member_name} · {w.plan_name} ({w.member_type === 'company' ? '회사' : '개인'})</div>
+              <div className="small">{w.cycle_start} ~ {w.cycle_end}</div>
+            </div>
+            {!over && (
+              <div className="wallet-remain">
+                <span className="label">남은 시간</span>
+                <span className="big">{fmtMin(w.remaining_minutes)}</span>
+              </div>
+            )}
             <div className={`bar ${over ? 'over' : ''}`}><div style={{ width: `${over ? 100 : pct}%` }} /></div>
-            <div>사용 {fmtMin(w.used_minutes)} / 전체 {fmtMin(w.total_minutes)}</div>
-            {over ? (
-              <div style={{ color: '#b42318' }}>
+            <div className="wallet-used"><span>사용 {fmtMin(w.used_minutes)}</span><span>전체 {fmtMin(w.total_minutes)}</span></div>
+            {over && (
+              <div className="box warn">
                 한도를 {Math.abs(w.remaining_minutes)}분 넘었어요. 넘은 시간은 시간당 {me.overage_per_hour.toLocaleString('ko-KR')}원으로 청구돼요
               </div>
-            ) : (
-              <div>남은 시간 {fmtMin(w.remaining_minutes)}</div>
             )}
           </div>
         );
@@ -86,13 +92,12 @@ function Me() {
           {hasMembership && <p className="small">멤버십을 올리면 바로, 내리면 다음 주기부터 적용돼요.</p>}
           <div className="plans">
             {plans.map((p) => (
-              <div className="card" key={p.id}>
-                <strong>{p.name}</strong>
-                <div>월 {Number(p.monthly_fee).toLocaleString('ko-KR')}원</div>
+              <div className={`card ${current?.plan_name === p.name ? 'selected' : ''}`} key={p.id}>
+                <span className="plan-name">{p.name}</span>
+                <div className="plan-fee">월 {Number(p.monthly_fee).toLocaleString('ko-KR')}<span className="unit">원</span></div>
                 <div className="small">월 {p.monthly_hours}시간</div>
                 <button
                   disabled={busy}
-                  style={{ marginTop: 8 }}
                   onClick={() => pick(hasMembership ? '/me/membership/change' : '/me/membership', p.id)}
                 >
                   {hasMembership ? '이 종류로 변경' : '신청'}
@@ -105,14 +110,14 @@ function Me() {
 
       <h2>멤버십 이력</h2>
       {me.memberships.length === 0 ? <p className="small">이력이 없어요.</p> : (
-        <table>
+        <div className="table-wrap"><table>
           <thead><tr><th>종류</th><th>월 시간</th><th>시작</th><th>끝</th></tr></thead>
           <tbody>
             {me.memberships.map((m: any) => (
               <tr key={m.id}><td>{m.plan_name}{current?.id === m.id ? ' (현재)' : ''}</td><td>{m.monthly_hours}시간</td><td>{m.start_date.slice(0, 10)}</td><td>{m.end_date.slice(0, 10)}</td></tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
     </>
   );

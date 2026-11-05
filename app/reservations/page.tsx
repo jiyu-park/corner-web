@@ -37,40 +37,42 @@ function Mine() {
       <ErrorBox error={error} />
       <OkBox>{msg}</OkBox>
       {!list ? <p className="small">불러오는 중…</p> : list.length === 0 ? <p className="small">예약이 없어요.</p> : (
-        <table>
+        <div className="table-wrap"><table className="stack-table">
           <thead><tr><th>날짜</th><th>시간</th><th>방</th><th>인원</th><th>상태</th><th>차감</th><th></th></tr></thead>
           <tbody>
             {list.map((r) => (
               <tr key={r.id}>
-                <td>{String(r.reserved_date).slice(0, 10)}</td>
-                <td>{r.start_time}~{r.end_time}</td>
-                <td>{r.room_name}</td>
-                <td>
+                <td data-label="날짜">{String(r.reserved_date).slice(0, 10)}</td>
+                <td data-label="시간">{r.start_time}~{r.end_time}</td>
+                <td data-label="방">{r.room_name}</td>
+                <td data-label="인원">
                   {editing === r.id ? (
                     <>
-                      <input type="number" value={people} onChange={(e) => setPeople(e.target.value)} style={{ width: 64 }} />{' '}
-                      <button onClick={() => savePeople(r.id)}>저장</button>{' '}
-                      <button className="sub" onClick={() => setEditing(null)}>닫기</button>
+                      <div className="inline-actions">
+                        <input className="inline-input" type="number" value={people} onChange={(e) => setPeople(e.target.value)} />
+                        <button className="small-btn" onClick={() => savePeople(r.id)}>저장</button>
+                        <button className="sub small-btn" onClick={() => setEditing(null)}>닫기</button>
+                      </div>
                     </>
                   ) : `${r.people_count}명`}
                 </td>
-                <td>
+                <td data-label="상태">
                   <span className={`tag ${r.status}`}>{STATUS_LABEL[r.status] || r.status}</span>
                   {r.correction_reason && <div className="small">정정: {r.correction_reason}</div>}
                 </td>
-                <td>{fmtMin(r.charged_minutes)}</td>
-                <td>
+                <td data-label="차감">{fmtMin(r.charged_minutes)}</td>
+                <td className="actions">
                   {r.status === 'reserved' && editing !== r.id && (
-                    <>
-                      <button className="sub" onClick={() => { setEditing(r.id); setPeople(String(r.people_count)); }}>인원 수정</button>{' '}
-                      <button className="danger" onClick={() => cancel(r.id)}>취소</button>
-                    </>
+                    <div className="inline-actions">
+                      <button className="sub small-btn" onClick={() => { setEditing(r.id); setPeople(String(r.people_count)); }}>인원 수정</button>
+                      <button className="danger small-btn" onClick={() => cancel(r.id)}>취소</button>
+                    </div>
                   )}
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       )}
     </>
   );

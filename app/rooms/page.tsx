@@ -64,17 +64,18 @@ function Rooms() {
     <>
       <h1>회의실 예약</h1>
       <h2>회의실</h2>
-      <table>
+      <div className="table-wrap"><table>
         <thead><tr><th>이름</th><th>정원</th><th>화상장비</th></tr></thead>
         <tbody>{rooms.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.max_people}명</td><td>{r.has_video ? '있음' : '없음'}</td></tr>)}</tbody>
-      </table>
+      </table></div>
 
       <h2>그날 예약 현황</h2>
       <div className="card">
         <div className="timeline">{slots.map((b, i) => <div key={i} className={b ? 'busy' : 'free'} />)}</div>
         <div className="ticks">{['08', '10', '12', '14', '16', '18', '20'].map((h) => <span key={h}>{h}:00</span>)}</div>
+        <div className="legend"><span><i className="l-busy" />예약됨</span><span><i className="l-free" />비어 있음</span></div>
         {day.length === 0 ? <p className="small">이 날은 예약이 없어요.</p> : (
-          <ul>{day.map((r) => <li key={r.id}>{r.start_time}~{r.end_time} ({fmtMin(toMin(r.end_time) - toMin(r.start_time))}) · {r.status === 'reserved' ? '예약됨' : r.status === 'completed' ? '사용 완료' : r.status === 'no_show' ? '노쇼' : r.status}</li>)}</ul>
+          <ul className="day-list">{day.map((r) => <li key={r.id}>{r.start_time}~{r.end_time} ({fmtMin(toMin(r.end_time) - toMin(r.start_time))}) · {r.status === 'reserved' ? '예약됨' : r.status === 'completed' ? '사용 완료' : r.status === 'no_show' ? '노쇼' : r.status}</li>)}</ul>
         )}
       </div>
 
@@ -95,10 +96,10 @@ function Rooms() {
             {free ? <input type="time" value={end} onChange={(e) => setEnd(e.target.value)} />
               : <select value={end} onChange={(e) => setEnd(e.target.value)}>{TIMES.map((t) => <option key={t}>{t}</option>)}</select>}
           </label>
-          <label>참석 인원<input type="number" value={people} onChange={(e) => setPeople(e.target.value)} style={{ width: 90 }} /></label>
+          <label className="people">참석 인원<input type="number" value={people} onChange={(e) => setPeople(e.target.value)} /></label>
           <button disabled={busy}>예약</button>
         </div>
-        <label style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, fontSize: 11 }}>
+        <label className="check">
           <input type="checkbox" checked={free} onChange={(e) => setFree(e.target.checked)} /> 개발자용 자유 입력
         </label>
       </form>

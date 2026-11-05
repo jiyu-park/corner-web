@@ -22,13 +22,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <nav className="nav">
-        <strong>모퉁이</strong>
-        {links.map(([h, l]) => (
-          <Link key={h} href={h} className={path === h ? 'active' : ''}>{l}</Link>
-        ))}
-        <span className="spacer" />
-        <span className="small">{name}님</span>
-        <button className="link" onClick={() => { clearAuth(); router.replace('/login'); }}>로그아웃</button>
+        <div className="nav-top">
+          <strong className="brand">모퉁이</strong>
+          <span className="spacer" />
+          <span className="small">{name}님</span>
+          <button className="link" onClick={() => { clearAuth(); router.replace('/login'); }}>로그아웃</button>
+        </div>
+        <div className="tabs">
+          {links.map(([h, l]) => (
+            <Link key={h} href={h} className={path === h ? 'active' : ''}>{l}</Link>
+          ))}
+        </div>
       </nav>
       <main className="main">{children}</main>
     </>
