@@ -95,6 +95,7 @@ function Rooms() {
   });
   const room = rooms.find((r) => r.id === roomId);
   const roomCal = cal.filter((c) => c.meeting_room_id === roomId);
+  const mineDates = new Set(cal.filter((c) => c.mine).map((c) => c.reserved_date));
   const over = preview?.ok && preview.has_membership && preview.overage_minutes > 0;
 
   return (
@@ -121,7 +122,7 @@ function Rooms() {
 
       <h2>2. 날짜 고르기 <span className="small">({room?.name ?? '회의실'}의 예약)</span></h2>
       <div className="card">
-        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} items={roomCal} today={today()} />
+        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} roomItems={roomCal} mineDates={mineDates} today={today()} />
       </div>
 
       <h2>{date} ({weekday(date)}) {room?.name} 시간표</h2>
