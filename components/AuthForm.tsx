@@ -5,6 +5,10 @@ import { useState } from 'react';
 import { api, setAuth } from '@/lib/api';
 import { ErrorBox } from './ErrorBox';
 
+// 체험용 계정 안내는 환경 변수로 켠다. 값이 없으면 화면에 나오지 않는다.
+const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL;
+const demoPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
+
 export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -44,6 +48,25 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         <button disabled={busy}>{signup ? '가입하기' : '로그인'}</button>
         <ErrorBox error={error} />
       </form>
+      {!signup && demoEmail && demoPassword && (
+        <div className="card" style={{ marginTop: 12 }}>
+          <strong>체험용 계정</strong>
+          <p className="small" style={{ margin: '6px 0' }}>
+            이메일 <code>{demoEmail}</code>
+            <br />
+            비밀번호 <code>{demoPassword}</code>
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail(demoEmail);
+              setPassword(demoPassword);
+            }}
+          >
+            체험용 계정으로 채우기
+          </button>
+        </div>
+      )}
       <p className="small">
         {signup ? <>이미 계정이 있나요? <Link href="/login">로그인</Link></> : <>처음이세요? <Link href="/signup">회원가입</Link></>}
       </p>

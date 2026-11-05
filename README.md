@@ -18,6 +18,7 @@ npm run dev                  # http://localhost:3101
 | 이름 | 설명 |
 |---|---|
 | `NEXT_PUBLIC_API_URL` | 백엔드 주소 (예: Render 주소). 브라우저에서 쓰는 값이라 비밀값을 넣지 않는다 |
+| `NEXT_PUBLIC_DEMO_EMAIL`, `NEXT_PUBLIC_DEMO_PASSWORD` | (선택) 로그인 화면에 보여 줄 체험용 고객 계정. 가상 데이터용 계정만 넣는다 |
 
 ## 배포 (Vercel)
 
