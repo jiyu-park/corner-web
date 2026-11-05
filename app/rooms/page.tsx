@@ -43,6 +43,7 @@ function Rooms() {
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [anchor, setAnchor] = useState<number | null>(null); // 시간표에서 첫 번째로 누른 칸
 
   useEffect(() => {
     api('/meeting-rooms').then((r) => { setRooms(r); if (r[0]) setRoomId(r[0].id); }).catch(setError);
@@ -93,7 +94,25 @@ function Rooms() {
       : `${label}은 모든 회의실의 예약이 가득 찼어요. 다른 날짜를 골라 주세요.`);
   }
 
+  // 시간표 칸 누르기: 첫 번째 누른 칸이 시작, 두 번째 누른 칸이 끝(그 칸의 끝 시각)이 된다.
+  // 한 칸만 누르고 싶으면 같은 칸을 한 번 더 누른다. 예약된 칸이 사이에 끼면 새로 시작한다.
+  function pickSlot(i: number) {
+    if (slots[i]) return;
+    const hhmm = (idx: number) => { const m = 8 * 60 + idx * 30; return `${String(Math.floor(m / 60)).padStart(2, '0')}:${m % 60 ? '30' : '00'}`; };
+    if (anchor === null) {
+      setAnchor(i); setStart(hhmm(i)); setEnd(hhmm(i + 1));
+      return;
+    }
+    const lo = Math.min(anchor, i), hi = Math.max(anchor, i);
+    if (slots.slice(lo, hi + 1).some(Boolean)) {
+      setAnchor(i); setStart(hhmm(i)); setEnd(hhmm(i + 1));
+      return;
+    }
+    setStart(hhmm(lo)); setEnd(hhmm(hi + 1)); setAnchor(null);
+  }
+
   function pickDate(d: string) {
+    setAnchor(null);
     setNotice(null);
     setDate(d);
     setMonth(d.slice(0, 7));
@@ -154,9 +173,27 @@ function Rooms() {
 
       <h2>{date} ({weekday(date)}) {room?.name} 시간표</h2>
       <div className="card">
-        <div className="timeline">{slots.map((b, i) => <div key={i} className={b ? 'busy' : 'free'} />)}</div>
+        <div className="timeline">{slots.map((b, i) => {
+          const m = 8 * 60 + i * 30;
+          const picked = !b && !free && m >= toMin(start) && m < toMin(end);
+          const label = `${String(Math.floor(m / 60)).padStart(2, '0')}:${m % 60 ? '30' : '00'}${b ? ' 예약됨' : ''}`;
+          return (
+            <div
+              key={i}
+              className={`${b ? 'busy' : 'free pickable'}${picked ? ' picked' : ''}${anchor === i ? ' anchor' : ''}`}
+              role="button"
+              tabIndex={b ? -1 : 0}
+              aria-disabled={b}
+              aria-label={label}
+              title={label}
+              onClick={() => pickSlot(i)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickSlot(i); } }}
+            />
+          );
+        })}</div>
         <div className="ticks">{['08', '10', '12', '14', '16', '18', '20'].map((h) => <span key={h}>{h}:00</span>)}</div>
-        <div className="legend"><span><i className="l-busy" />예약됨</span><span><i className="l-free" />비어 있음</span></div>
+        <div className="legend"><span><i className="l-busy" />예약됨</span><span><i className="l-free" />비어 있음</span><span><i className="l-pick" />내가 고른 시간</span></div>
+        <p className="small">비어 있는 칸을 눌러 시작과 끝을 고를 수 있어요. 첫 칸을 누르고, 끝 칸을 한 번 더 누르세요. (아래 3번에서 직접 바꿔도 돼요)</p>
         {day.length === 0 ? <p className="small">이 날은 예약이 없어요.</p> : (
           <ul className="day-list">{day.map((r) => <li key={r.id}>{r.start_time}~{r.end_time} ({fmtMin(toMin(r.end_time) - toMin(r.start_time))}) · {r.status === 'reserved' ? '예약됨' : r.status === 'completed' ? '사용 완료' : r.status === 'no_show' ? '노쇼' : r.status}</li>)}</ul>
         )}

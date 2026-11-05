@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { clearAuth, getName, getToken } from '@/lib/api';
+import { Logo } from './Logo';
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -23,7 +24,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     <>
       <nav className="nav">
         <div className="nav-top">
-          <strong className="brand">모퉁이</strong>
+          <Link href="/" className="brand" aria-label="모퉁이 홈"><Logo size={30} /></Link>
           <span className="spacer" />
           <span className="small">{name}님</span>
           <button className="link" onClick={() => { clearAuth(); router.replace('/login'); }}>로그아웃</button>

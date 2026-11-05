@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { api, setAuth } from '@/lib/api';
 import { ErrorBox } from './ErrorBox';
+import { LogoMark } from './Logo';
 
 // 체험용 계정 안내는 환경 변수로 켠다. 값이 없으면 화면에 나오지 않는다.
 const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL;
@@ -40,6 +41,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
 
   return (
     <div className="auth">
+      <div className="auth-logo"><LogoMark size={56} /></div>
       <h1>모퉁이 {signup ? '회원가입' : '로그인'}</h1>
       <form onSubmit={submit} className="card">
         <label>이메일<input value={email} onChange={(e) => setEmail(e.target.value)} /></label>

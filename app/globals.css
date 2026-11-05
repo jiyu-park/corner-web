@@ -392,3 +392,16 @@ tbody tr:last-child td { border-bottom: 0; }
   .room-info { padding: var(--sp-200) var(--sp-300) var(--sp-300); }
   .room-info strong { font-size: var(--fs-body3); }
 }
+
+/* 로고 */
+.logo { display: inline-flex; align-items: center; gap: var(--sp-200); }
+.logo-text { font-size: var(--fs-title1); font-weight: var(--weight-bold); color: var(--text-strong); letter-spacing: -0.02em; }
+.brand { display: inline-flex; align-items: center; text-decoration: none; }
+.auth-logo { display: flex; justify-content: center; margin-bottom: var(--sp-300); }
+
+.timeline .pickable { cursor: pointer; }
+.timeline .pickable:hover { background: var(--gray-200); }
+.timeline .busy { cursor: not-allowed; }
+.timeline .picked { background: var(--primary-light, #99b8ff); outline: 2px solid var(--primary-regular); outline-offset: -2px; }
+.timeline .anchor { outline: 2px dashed var(--primary-regular); outline-offset: -2px; }
+.legend .l-pick { background: var(--primary-light, #99b8ff); border: 2px solid var(--primary-regular); }
