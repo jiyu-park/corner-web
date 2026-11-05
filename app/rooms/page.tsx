@@ -13,6 +13,13 @@ const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
+// 회의실 사진 (Pexels 무료 사진, 출처는 public/rooms/CREDITS.md). 방 이름으로 연결한다.
+const ROOM_PHOTOS: Record<string, string> = {
+  '소회의실 A': '/rooms/room-a.jpg',
+  '회의실 B': '/rooms/room-b.jpg',
+  '회의실 C': '/rooms/room-c.jpg',
+  '대회의실 D': '/rooms/room-d.jpg',
+};
 const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
 const weekday = (date: string) => (date ? WEEKDAY[new Date(`${date}T00:00:00`).getDay()] : '');
 
@@ -130,8 +137,11 @@ function Rooms() {
             onClick={() => setRoomId(r.id)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setRoomId(r.id); } }}
           >
-            <strong>{r.name}</strong>
-            <span className="small">정원 {r.max_people}명 · 화상장비 {r.has_video ? '있음' : '없음'}</span>
+            {ROOM_PHOTOS[r.name] && <img src={ROOM_PHOTOS[r.name]} alt={`${r.name} 내부 사진`} />}
+            <div className="room-info">
+              <strong>{r.name}</strong>
+              <span className="small">정원 {r.max_people}명 · 화상장비 {r.has_video ? '있음' : '없음'}</span>
+            </div>
           </div>
         ))}
       </div>
