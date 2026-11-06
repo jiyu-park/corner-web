@@ -38,7 +38,7 @@ function Me() {
   const isCompany = member?.type === 'company';
   const hasMembership = me.wallets.some((w: any) => w.member_type === 'individual');
   const current = me.memberships.find((m: any) => {
-    const t = new Date().toISOString().slice(0, 10);
+    const t = me.today ?? new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10); // 한국 기준 오늘
     return m.start_date.slice(0, 10) <= t && m.end_date.slice(0, 10) >= t;
   });
 

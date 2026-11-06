@@ -33,7 +33,7 @@ function Mine() {
 
   return (
     <>
-      <h1>내 예약</h1>
+      <h1>내 예약 <span className="small">(한국 시간)</span></h1>
       <ErrorBox error={error} />
       <OkBox>{msg}</OkBox>
       {!list ? <p className="small">불러오는 중…</p> : list.length === 0 ? <p className="small">예약이 없어요.</p> : (

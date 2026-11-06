@@ -9,10 +9,8 @@ import { api, fmtMin } from '@/lib/api';
 const TIMES: string[] = [];
 for (let m = 8 * 60; m <= 22 * 60; m += 30) TIMES.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${m % 60 ? '30' : '00'}`);
 const toMin = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
-const today = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
+// 서버가 알려 주는 한국 기준 오늘이 오기 전까지만 쓰는 임시 값 (한국 시간으로 계산)
+const kstToday = () => new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 // 회의실 사진 (Pexels 무료 사진, 출처는 public/rooms/CREDITS.md). 방 이름으로 연결한다.
 const ROOM_PHOTOS: Record<string, string> = {
   '소회의실 A': '/rooms/room-a.jpg',
@@ -30,8 +28,9 @@ export default function Page() {
 function Rooms() {
   const [rooms, setRooms] = useState<any[]>([]);
   const [roomId, setRoomId] = useState<number | ''>('');
-  const [date, setDate] = useState(today());
-  const [month, setMonth] = useState(today().slice(0, 7));
+  const [todayKst, setTodayKst] = useState(kstToday());
+  const [date, setDate] = useState(kstToday());
+  const [month, setMonth] = useState(kstToday().slice(0, 7));
   const [cal, setCal] = useState<CalItem[]>([]);
   const [start, setStart] = useState('10:00');
   const [end, setEnd] = useState('11:00');
@@ -62,6 +61,7 @@ function Rooms() {
     try {
       const r = await api(`/reservations/calendar?month=${month}`);
       setCal(r.reservations);
+      if (r.today) setTodayKst(r.today);
     } catch (e) { setError(e); }
   }, [month]);
   useEffect(() => { loadCal(); }, [loadCal]);
@@ -167,11 +167,11 @@ function Rooms() {
 
       <h2>2. 날짜 고르기 <span className="small">({room?.name ?? '회의실'}의 예약)</span></h2>
       <div className="card">
-        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} roomItems={roomCal} mineDates={mineDates} onBlocked={onBlocked} today={today()} />
+        <Calendar month={month} onMonth={setMonth} selected={date} onSelect={pickDate} roomItems={roomCal} mineDates={mineDates} onBlocked={onBlocked} today={todayKst} />
         {notice && <p className="cal-note" role="status">{notice}</p>}
       </div>
 
-      <h2>{date} ({weekday(date)}) {room?.name} 시간표</h2>
+      <h2>{date} ({weekday(date)}) {room?.name} 시간표 <span className="small">(한국 시간)</span></h2>
       <div className="card">
         <div className="timeline">{slots.map((b, i) => {
           const m = 8 * 60 + i * 30;
@@ -199,7 +199,7 @@ function Rooms() {
         )}
       </div>
 
-      <h2>3. 시간과 인원 정하기</h2>
+      <h2>3. 시간과 인원 정하기 <span className="small">(한국 시간 기준)</span></h2>
       <form className="card" onSubmit={submit}>
         <div className="row">
           <label>회의실
