@@ -12,18 +12,18 @@ function Mine() {
   const [list, setList] = useState<any[] | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [msg, setMsg] = useState('');
-  const [editing, setEditing] = useState<number | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
   const [people, setPeople] = useState('');
 
   const load = useCallback(() => api('/reservations/mine').then(setList).catch(setError), []);
   useEffect(() => { load(); }, [load]);
 
-  async function cancel(id: number) {
+  async function cancel(id: string) {
     setError(null); setMsg('');
     try { const r = await api(`/reservations/${id}/cancel`, { method: 'POST' }); setMsg(r.message); await load(); }
     catch (e) { setError(e); }
   }
-  async function savePeople(id: number) {
+  async function savePeople(id: string) {
     setError(null); setMsg('');
     try {
       await api(`/reservations/${id}`, { method: 'PATCH', body: { people_count: people === '' ? undefined : Number(people) } });

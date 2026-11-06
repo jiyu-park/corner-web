@@ -2,7 +2,7 @@
 import { KeyboardEvent } from 'react';
 
 export type CalItem = {
-  id: number;
+  id: string;
   reserved_date: string;
   start_time: string;
   end_time: string;
